@@ -32,19 +32,28 @@ int main(int argc, char *argv[])
         int readerCount = 0;
         int writerCount = 0;
         char *c = line;
+        myargs_t *args;
         printf("Scenario %d\n", lineNumber);
         while (*c != '\n' && *c != '\0')
         {
             pthread_t p;
 
             if (*c == 'r')
-            {
-                pthread_create(&p, NULL, (void *)reader, (void *)rwLock);
+            {                
+                args = malloc(sizeof(myargs_t));
+                args->rwLock = rwLock;
+                args->thread_id = malloc(sizeof(int));
+                *args->thread_id = readerCount;
+                pthread_create(&p, NULL, (void *)reader, (void *)args);
                 readerCount++;
             }
             else if (*c == 'w')
-            {
-                pthread_create(&p, NULL, (void *)writer, (void *)rwLock);
+            {                
+                args = malloc(sizeof(myargs_t));
+                args->rwLock = rwLock;
+                args->thread_id = malloc(sizeof(int));
+                *args->thread_id = writerCount;
+                pthread_create(&p, NULL, (void *)writer, (void *)args);
                 writerCount++;
             }
             else
@@ -65,21 +74,21 @@ int main(int argc, char *argv[])
 
 void *reader(void *arg)
 { // Function to simulate a read
-    rwlock_t *myArgs = (rwlock_t *)arg;
-    rwlock_acquire_readlock(myArgs);
+    myargs_t *myArgs = (myargs_t *)arg;
+    rwlock_acquire_readlock(myArgs->rwLock);
     reading_writing();
-    rwlock_release_readlock(myArgs);
-    printf("Reader complete\n");
+    rwlock_release_readlock(myArgs->rwLock);
+    printf("Reader %d complete\n", *myArgs->thread_id);
     return NULL;
 }
 
 void *writer(void *arg)
 { // Function to simulate a write
-    rwlock_t *myArgs = (rwlock_t *)arg;
-    rwlock_acquire_writelock(myArgs);
+    myargs_t *myArgs = (myargs_t *)arg;
+    rwlock_acquire_writelock(myArgs->rwLock);
     reading_writing();
-    rwlock_release_writelock(myArgs);
-    printf("Writer complete\n");
+    rwlock_release_writelock(myArgs->rwLock);
+    printf("Writer %d complete\n", *myArgs->thread_id);
     return NULL;
 }
 

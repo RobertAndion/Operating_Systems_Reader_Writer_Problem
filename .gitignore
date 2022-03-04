@@ -4,3 +4,7 @@
 *.o
 
 rwmain
+
+out.txt
+
+Version_With_Starving/out_starving.txt

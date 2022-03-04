@@ -12,6 +12,12 @@ typedef struct _rwlock_t
     int readers;
 } rwlock_t;
 
+typedef struct _myargs_t
+{
+    int *thread_id;
+    rwlock_t *rwLock;
+} myargs_t;
+
 void rwlock_init(rwlock_t *);
 void rwlock_acquire_readlock(rwlock_t *);
 void rwlock_release_readlock(rwlock_t *);

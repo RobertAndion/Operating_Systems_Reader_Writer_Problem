@@ -10,10 +10,10 @@ void rwlock_init(rwlock_t *rw)
 }
 
 void rwlock_acquire_readlock(rwlock_t *rw)
-{   
+{
     sem_wait(&rw->reader_waiting);
     sem_post(&rw->reader_waiting);
-    
+
     sem_wait(&rw->writer_waiting); // If a writer is waiting, wait.
     sem_post(&rw->writer_waiting);
     sem_wait(&rw->lock);

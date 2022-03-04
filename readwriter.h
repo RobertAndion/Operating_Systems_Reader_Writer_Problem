@@ -1,5 +1,5 @@
 #ifndef __READWRITER__H__
-#define __READWRITER__H_
+#define __READWRITER__H__
 
 #include <semaphore.h>
 #include <stdio.h>
@@ -13,6 +13,12 @@ typedef struct _rwlock_t
     sem_t writer_waiting;
     int readers;
 } rwlock_t;
+
+typedef struct _myargs_t
+{
+    int *thread_id;
+    rwlock_t *rwLock;
+} myargs_t;
 
 void rwlock_init(rwlock_t *);
 void rwlock_acquire_readlock(rwlock_t *);
