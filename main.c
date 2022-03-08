@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
         int readerCount = 0;
         int writerCount = 0;
         char *c = line;
-        printf("Scenario %d\n", lineNumber);
+        printf("\n -- Scenario %d -- \n\n", lineNumber);
         myargs_t *args;
         while (*c != '\n' && *c != '\0')
         {
@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
 
             if (*c == 'r')
             {
+                printf("Reader %d entering\n", readerCount);
                 args = malloc(sizeof(myargs_t));
                 args->rwLock = rwLock;
                 args->thread_id = malloc(sizeof(int));
@@ -49,6 +50,7 @@ int main(int argc, char *argv[])
             }
             else if (*c == 'w')
             {
+                printf("Writer %d entering\n", writerCount);
                 args = malloc(sizeof(myargs_t));
                 args->rwLock = rwLock;
                 args->thread_id = malloc(sizeof(int));
@@ -63,6 +65,7 @@ int main(int argc, char *argv[])
             }
             c++;
         }
+        printf("#########################################\n");
         // Force main thread to wait long enough to see it all complete.
         sleep(30);
         lineNumber++;
@@ -72,22 +75,24 @@ int main(int argc, char *argv[])
 }
 
 void *reader(void *arg)
-{ // Function to simulate a read
+{ // Function to simulate a reader
     myargs_t *myArgs = (myargs_t *)arg;
     rwlock_acquire_readlock(myArgs->rwLock);
     reading_writing();
     rwlock_release_readlock(myArgs->rwLock);
     printf("Reader %d complete\n", *myArgs->thread_id);
+    free(myArgs->thread_id); // Free the int, good practice and no longer needed.
     return NULL;
 }
 
 void *writer(void *arg)
-{ // Function to simulate a write
+{ // Function to simulate a writer
     myargs_t *myArgs = (myargs_t *)arg;
     rwlock_acquire_writelock(myArgs->rwLock);
     reading_writing();
     rwlock_release_writelock(myArgs->rwLock);
     printf("Writer %d complete\n", *myArgs->thread_id);
+    free(myArgs->thread_id); // Free the int, good practice and no longer needed.
     return NULL;
 }
 

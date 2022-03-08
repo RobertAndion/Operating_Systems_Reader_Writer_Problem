@@ -4,7 +4,9 @@
 #include <semaphore.h>
 #include <stdio.h>
 #include "stdlib.h"
+
 // Code from figure 31.13 was used to start this project.
+
 typedef struct _rwlock_t
 {
     sem_t lock;      // Protects rwlock_t itself
@@ -14,7 +16,7 @@ typedef struct _rwlock_t
     int readers;
 } rwlock_t;
 
-typedef struct _myargs_t
+typedef struct _myargs_t // Custom arg struct to keep thread number
 {
     int *thread_id;
     rwlock_t *rwLock;
