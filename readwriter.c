@@ -11,11 +11,13 @@ void rwlock_init(rwlock_t *rw)
 
 void rwlock_acquire_readlock(rwlock_t *rw)
 {
-    sem_wait(&rw->reader_waiting); // If readers are waiting keep waiting, else enter next section.
-    sem_post(&rw->reader_waiting);
+    sem_wait(&rw->reader_waiting); // Hold reader_waiting incase writer_waiting is not available, stop new writers.
 
     sem_wait(&rw->writer_waiting); // If a writer is waiting, wait.
     sem_post(&rw->writer_waiting);
+
+    sem_post(&rw->reader_waiting);
+
     sem_wait(&rw->lock);
     rw->readers++;
     if (rw->readers == 1) // If first reader grab writelock.

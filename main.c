@@ -8,9 +8,12 @@
 long reading_writing();
 void *reader(void *);
 void *writer(void *);
-
+/* 
+* This is a custom main.c, it was created before the sample was provided to us.
+*/
 int main(int argc, char *argv[])
 {
+    int error;
     // Initialize the random number generator
     time_t t;
     srand((unsigned)time(&t));
@@ -45,7 +48,9 @@ int main(int argc, char *argv[])
                 args->rwLock = rwLock;
                 args->thread_id = malloc(sizeof(int));
                 *args->thread_id = readerCount;
-                pthread_create(&p, NULL, (void *)reader, (void *)args);
+                error = pthread_create(&p, NULL, (void *)reader, (void *)args);
+                if (error != 0)
+                    exit(-1);
                 readerCount++;
             }
             else if (*c == 'w')
@@ -55,7 +60,9 @@ int main(int argc, char *argv[])
                 args->rwLock = rwLock;
                 args->thread_id = malloc(sizeof(int));
                 *args->thread_id = writerCount;
-                pthread_create(&p, NULL, (void *)writer, (void *)args);
+                error = pthread_create(&p, NULL, (void *)writer, (void *)args);
+                if (error != 0)
+                    exit(-1);
                 writerCount++;
             }
             else
@@ -106,3 +113,4 @@ long reading_writing() // Function to simulate IO time or data structure access 
             x = i * j;
     return x;
 }
+  
